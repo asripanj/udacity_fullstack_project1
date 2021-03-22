@@ -53,7 +53,7 @@ class Venue(db.Model):
     seeking_description = db.Column(db.String(), nullable=False)
     shows = db.relationship('Shows', backref='venue', lazy=True) #venue is parent and shows are child
 
-    # TODO: implement any missing fields, as a database migration using Flask-Migrate UPDATE
+    # TODO: implement any missing fields, as a database migration using Flask-Migrate
     
 class Artist(db.Model):
     __tablename__ = 'Artist'
@@ -237,47 +237,35 @@ def create_venue_form():
 @app.route('/venues/create', methods=['POST'])
 def create_venue_submission():
   # TODO: insert form data as a new Venue record in the db, instead
-  body = {}
+  form = VenueForm(request.form)
   error = False
-  try:
-    name = request.get_json()['name']
-    city = request.get_json()['city']
-    state = request.get_json()['state']
-    address = request.get_json()['address']
-    phone = request.get_json()['phone']
-    genres = request.get_json()['genres']
-    image_link = request.get_json()['image_link']
-    facebook_link = request.get_json()['facebook_link']
-    website = request.get_json()['website']
-    seeking_talent = request.get_json()['seeking_talent']
-    seeking_description = request.get_json()['seeking_description']
-   
-    venue = Venue(name=name, city=city, state=state, address= address, phone=phone, genres=genres, image_link=image_link, facebook_link=facebook_link, website=website, seeking_talent=seeking_talent, seeking_description=seeking_description)
-    db.session.add(artist)
-    db.session.commit()
+  if form.validate():
+    try:
+      name = request.form['name']
+      city = request.form['city']
+      state = request.form['state']
+      address = request.form['address']
+      phone = request.form['phone']
+      genres = request.form.getlist['genres']
+      image_link = request.form['image_link']
+      facebook_link = request.form['facebook_link']
+      website = request.form['website']
+      seeking_talent = request.form['seeking_talent']
+      seeking_description = request.form['seeking_description']
     
-    body['name'] = venue.name
-    body['city'] = venue.city
-    body['state'] = venue.state
-    body['address'] = venue.address
-    body['phone'] = venue.phone
-    body['genres'] = venue.genres
-    body['image_link'] = venue.image_link
-    body['facebook_link'] = venue.facebook_link
-    body['website'] = venue.website
-    body['seeking_talent'] = venue.seeking_talent
-    body['seeking_description'] = venue.seeking_description
-
-  except():
-    db.session.rollback()
-    error =  True
-    print(sys.exc_info())
-  finally:
-    db.session.close()
-  if error:
-    abort(500)
-  else:
-    return jsonify(body)
+      venue = Venue(name=name, city=city, state=state, address= address, phone=phone, genres=genres, image_link=image_link, facebook_link=facebook_link, website=website, seeking_talent=seeking_talent, seeking_description=seeking_description)
+      db.session.add(venue)
+      db.session.commit()
+    except():
+      db.session.rollback()
+      error =  True
+      print(sys.exc_info())
+    finally:
+      db.session.close()
+    if error:
+      abort(500)
+    else:
+      return jsonify(body)
   # TODO: modify data to be the data object returned from db insertion
 
   # on successful db insert, flash success
