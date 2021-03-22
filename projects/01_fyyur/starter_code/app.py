@@ -238,7 +238,6 @@ def create_venue_form():
 def create_venue_submission():
   # TODO: insert form data as a new Venue record in the db, instead
   form = VenueForm(request.form)
-  error = False
   if form.validate():
     try:
       name = request.form['name']
@@ -258,14 +257,11 @@ def create_venue_submission():
       db.session.commit()
     except():
       db.session.rollback()
-      error =  True
+      flash('Error! Was not able to add the venue')
       print(sys.exc_info())
     finally:
       db.session.close()
-    if error:
-      abort(500)
-    else:
-      return jsonify(body)
+
   # TODO: modify data to be the data object returned from db insertion
 
   # on successful db insert, flash success
