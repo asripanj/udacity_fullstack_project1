@@ -257,8 +257,7 @@ def create_venue_submission():
       db.session.commit()
     except():
       db.session.rollback()
-      flash('Error! Was not able to add the venue')
-      print(sys.exc_info())
+      flash('An error has occured. Venue' + request.form['name'] + 'could not be listed')
     finally:
       db.session.close()
 
@@ -266,7 +265,8 @@ def create_venue_submission():
 
   # on successful db insert, flash success
   flash('Venue ' + request.form['name'] + ' was successfully listed!')
-  # TODO: on unsuccessful db insert, flash an error instead.
+  
+  # TODO: on unsuccessful db insert, flash an error instead. DONE
   # e.g., flash('An error occurred. Venue ' + data.name + ' could not be listed.')
   # see: http://flask.pocoo.org/docs/1.0/patterns/flashing/
   return render_template('pages/home.html')
