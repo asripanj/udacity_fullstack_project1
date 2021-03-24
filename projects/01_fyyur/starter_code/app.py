@@ -12,6 +12,7 @@ from flask_sqlalchemy import SQLAlchemy
 import logging
 from logging import Formatter, FileHandler
 from flask_wtf import Form
+from flask_wtf.csrf import CSRFProtect
 from forms import *
 
 #----------------------------------------------------------------------------#
@@ -23,6 +24,7 @@ moment = Moment(app)
 app.config.from_object('config')
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
+csrf = CSRFProtect(app)
 
 
 
@@ -247,7 +249,7 @@ def create_venue_form():
 @app.route('/venues/create', methods=['POST'])
 def create_venue_submission():
   # TODO: insert form data as a new Venue record in the db, instead
-  form = VenueForm(request.form)
+  form = VenueForm(request.form, meta={'csrf': False})
   if form.validate():
     try:
       venue = Venue(
@@ -472,7 +474,7 @@ def create_artist_form():
 def create_artist_submission():
   # called upon submitting the new artist listing form
   # TODO: insert form data as a new Venue record in the db, instead
-  form = ArtistForm(request.form)
+  form = ArtistForm(request.form, meta={'csrf': False})
   if form.validate():
     try:
       artist = Artist(
@@ -567,7 +569,7 @@ def create_shows():
 def create_show_submission():
   # called to create new shows in the db, upon submitting new show listing form
   # TODO: insert form data as a new Show record in the db, instead
-  form = ShowForm(request.form)
+  form = ShowForm(request.form, meta={'csrf': False})
   if form.validate():
     try: 
       show = Shows(
